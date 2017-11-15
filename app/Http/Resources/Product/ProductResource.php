@@ -4,6 +4,7 @@ namespace App\Http\Resources\Product;
 
 use Illuminate\Http\Resources\Json\Resource;
 
+
 class ProductResource extends Resource
 {
     /**
