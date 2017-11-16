@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Exceptions\ProductNotBelognsToUser;
 use App\Http\Requests\ProductRequest;
 use App\Http\Resources\Product\Collection;
 use App\Http\Resources\Product\ProductResource;
 use App\Model\Product;
+use Auth;
 use Illuminate\Http\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -90,6 +92,8 @@ class ProductController extends Controller
         // $request['details'] = $request->description;
         // unset($request['description']);
 
+        $this->productUserCheck($product);
+
         $product->update($request->all());
 
         return response([
@@ -105,8 +109,16 @@ class ProductController extends Controller
      */
     public function destroy(Product $product)
     {
+        $this->productUserCheck($product);
+        
         $product->delete();
 
         return response(null, Response::HTTP_NO_CONTENT); 
+    }
+
+    public function productUserCheck($product) {
+        if(Auth::id() !== $product->user_id) {
+            throw new ProductNotBelognsToUser;
+        }
     }
 }
